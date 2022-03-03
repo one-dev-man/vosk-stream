@@ -1,7 +1,10 @@
-import WebSocketServer from "./websocket/server";
-declare const _default: {
+import VoskStreamWebSocketServer from "./websocket/server";
+import VoskStreamWebSocketClient from "./websocket/client.web";
+declare const VoskStream: {
+    TCP: {};
     WebSocket: {
-        Server: typeof WebSocketServer;
+        Server: typeof VoskStreamWebSocketServer;
+        Client: typeof VoskStreamWebSocketClient;
     };
 };
-export default _default;
+export default VoskStream;

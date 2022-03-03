@@ -97,3 +97,4 @@ Transcriber.VOSK_MODELS = {
         });
     }
 };
+//# sourceMappingURL=transcriber.js.map

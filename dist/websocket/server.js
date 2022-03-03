@@ -98,3 +98,4 @@ function getTranscriptionCallback(socket, old_transcription_memory) {
     };
     return cb;
 }
+//# sourceMappingURL=server.js.map

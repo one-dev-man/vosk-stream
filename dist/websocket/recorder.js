@@ -218,3 +218,4 @@ else if (byteRemainder == 2) {
     base64 += encodings[a] + encodings[b] + encodings[c] + '=';
 } return base64; }
 window ? window["Recorder"] = Recorder : null;
+//# sourceMappingURL=recorder.js.map
