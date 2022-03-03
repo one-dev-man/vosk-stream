@@ -1,0 +1,25 @@
+{
+  "name": "vosk-stream",
+  "version": "0.0.0-dev1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "browserify": "browserify ./src/websocket/client.web.ts -p tsify -o ./dist-bundles/client.web.js",
+    "build": "del .\\dist /S /Q > NUL && tsc --build && cd src && copyfiles -e=\"./**/*.ts\" \"./**/*\" \"../dist/\" && cd ../ && npm run browserify",
+    "test": "node ./dist/test/test",
+    "build-test": "npm run build & npm run test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ffmpeg-static": "^5.0.0",
+    "vosk": "^0.3.32",
+    "websocket": "^1.0.34"
+  },
+  "devDependencies": {
+    "@types/ffmpeg-static": "^3.0.1",
+    "@types/node": "^10.17.60",
+    "@types/websocket": "^1.0.5"
+  }
+}
