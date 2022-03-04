@@ -8,7 +8,7 @@ export declare class Listener {
     removeListener(event: string, callback: Function): void;
     removeListeners(event: string): void;
     off(event: string, callback?: Function | null): void;
-    callEvent(event: string, ...args: any): Promise<unknown>;
+    callEvent(event: string, ...args: any[]): Promise<unknown>;
 }
 export declare class StaticListener {
     static _events: {

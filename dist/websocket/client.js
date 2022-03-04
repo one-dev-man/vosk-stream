@@ -10,7 +10,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _VoskStreamWebSocketClient_ws_rul, _VoskStreamWebSocketClient_ws_protocols, _VoskStreamWebSocketClient_ws, _VoskStreamWebSocketClient_record, _VoskStreamWebSocketClient_closed, _VoskStreamWebSocketClient_langModel;
+var _VoskStreamWebSocketClient_ws_rul, _VoskStreamWebSocketClient_ws_protocols, _VoskStreamWebSocketClient_ws, _VoskStreamWebSocketClient_record, _VoskStreamWebSocketClient_closed, _VoskStreamWebSocketClient_langModel, _VoskStreamWebSocketClient_send;
 Object.defineProperty(exports, "__esModule", { value: true });
 const listener_class_1 = require("../utils/listener.class");
 const recorder_1 = require("./recorder");
@@ -23,6 +23,11 @@ class VoskStreamWebSocketClient extends listener_class_1.Listener {
         _VoskStreamWebSocketClient_record.set(this, null);
         _VoskStreamWebSocketClient_closed.set(this, true);
         _VoskStreamWebSocketClient_langModel.set(this, null);
+        //
+        _VoskStreamWebSocketClient_send.set(this, (event, content) => {
+            let request = ((event instanceof Object) && !(event instanceof Array)) ? event : { event: event, content: content };
+            __classPrivateFieldGet(this, _VoskStreamWebSocketClient_ws, "f")?.send(JSON.stringify(request));
+        });
         __classPrivateFieldSet(this, _VoskStreamWebSocketClient_ws_rul, url, "f");
         __classPrivateFieldSet(this, _VoskStreamWebSocketClient_ws_protocols, protocols, "f");
     }
@@ -40,19 +45,6 @@ class VoskStreamWebSocketClient extends listener_class_1.Listener {
     off(event, callback) { return super.off(event, callback); }
     callEvent(event, ...args) { return super.callEvent(event, ...args); }
     //
-    setLangModel(label) {
-        !__classPrivateFieldGet(this, _VoskStreamWebSocketClient_closed, "f") && label ? __classPrivateFieldGet(this, _VoskStreamWebSocketClient_ws, "f")?.send(JSON.stringify({ model: label })) : null;
-    }
-    transcribe(buffer) {
-        __classPrivateFieldGet(this, _VoskStreamWebSocketClient_ws, "f")?.send(buffer);
-    }
-    async startRecording() {
-        return await __classPrivateFieldGet(this, _VoskStreamWebSocketClient_record, "f")?.start();
-    }
-    async stopRecording() {
-        return await __classPrivateFieldGet(this, _VoskStreamWebSocketClient_record, "f")?.stop();
-    }
-    //
     open() {
         return new Promise((resolve, reject) => {
             this.once("open", () => resolve(true));
@@ -60,13 +52,7 @@ class VoskStreamWebSocketClient extends listener_class_1.Listener {
             __classPrivateFieldGet(this, _VoskStreamWebSocketClient_ws, "f").addEventListener("open", () => {
                 __classPrivateFieldGet(this, _VoskStreamWebSocketClient_ws, "f")?.addEventListener("message", message => {
                     let response = JSON.parse(message.data);
-                    if (response.model) {
-                        __classPrivateFieldSet(this, _VoskStreamWebSocketClient_langModel, response.model, "f");
-                        this.callEvent("model", this.langModel);
-                    }
-                    else {
-                        this.callEvent("transcription", response);
-                    }
+                    this.callEvent(response.event, response.content);
                 });
                 __classPrivateFieldSet(this, _VoskStreamWebSocketClient_closed, false, "f");
                 this.callEvent("open");
@@ -97,8 +83,47 @@ class VoskStreamWebSocketClient extends listener_class_1.Listener {
             __classPrivateFieldGet(this, _VoskStreamWebSocketClient_ws, "f")?.close();
         });
     }
+    //
+    getLangModels() {
+        return new Promise((resolve, reject) => {
+            let request = {
+                event: "" + Date.now(),
+                content: {
+                    command: "get_models"
+                },
+            };
+            this.once(request.event, (content) => {
+                resolve(content.models);
+            });
+            __classPrivateFieldGet(this, _VoskStreamWebSocketClient_send, "f").call(this, request);
+        });
+    }
+    setLangModel(label) {
+        return new Promise((resolve, reject) => {
+            let request = {
+                event: "" + Date.now(),
+                content: {
+                    command: "set_model",
+                    model: label
+                },
+            };
+            this.once(request.event, (content) => {
+                resolve(content.model);
+            });
+            !__classPrivateFieldGet(this, _VoskStreamWebSocketClient_closed, "f") && label ? __classPrivateFieldGet(this, _VoskStreamWebSocketClient_send, "f").call(this, request) : null;
+        });
+    }
+    transcribe(buffer) {
+        __classPrivateFieldGet(this, _VoskStreamWebSocketClient_ws, "f")?.send(buffer);
+    }
+    async startRecording() {
+        return await __classPrivateFieldGet(this, _VoskStreamWebSocketClient_record, "f")?.start();
+    }
+    async stopRecording() {
+        return await __classPrivateFieldGet(this, _VoskStreamWebSocketClient_record, "f")?.stop();
+    }
 }
 exports.default = VoskStreamWebSocketClient;
-_VoskStreamWebSocketClient_ws_rul = new WeakMap(), _VoskStreamWebSocketClient_ws_protocols = new WeakMap(), _VoskStreamWebSocketClient_ws = new WeakMap(), _VoskStreamWebSocketClient_record = new WeakMap(), _VoskStreamWebSocketClient_closed = new WeakMap(), _VoskStreamWebSocketClient_langModel = new WeakMap();
+_VoskStreamWebSocketClient_ws_rul = new WeakMap(), _VoskStreamWebSocketClient_ws_protocols = new WeakMap(), _VoskStreamWebSocketClient_ws = new WeakMap(), _VoskStreamWebSocketClient_record = new WeakMap(), _VoskStreamWebSocketClient_closed = new WeakMap(), _VoskStreamWebSocketClient_langModel = new WeakMap(), _VoskStreamWebSocketClient_send = new WeakMap();
 window ? window["VoskStream"] = { Client: VoskStreamWebSocketClient } : null;
-//# sourceMappingURL=client.web.js.map
+//# sourceMappingURL=client.js.map

@@ -23,7 +23,7 @@ class Listener {
         if (callback instanceof Function) {
             var _cb = (...args) => {
                 this.removeListener(event, _cb);
-                callback(args);
+                callback(...args);
             };
             this._events[event].push(_cb);
         }
@@ -86,7 +86,7 @@ class StaticListener {
         if (callback instanceof Function) {
             var _cb = (...args) => {
                 this.removeListener(event, _cb);
-                callback(args);
+                callback(...args);
             };
             this._events[event].push(_cb);
         }
@@ -148,7 +148,7 @@ const ObjectListener_ = {
         if (callback instanceof Function) {
             var _cb = (...args) => {
                 this.removeListener(event, _cb);
-                callback(args);
+                callback(...args);
             };
             this._events[event].push(_cb);
         }

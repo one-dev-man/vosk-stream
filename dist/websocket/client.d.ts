@@ -13,12 +13,13 @@ export default class VoskStreamWebSocketClient extends Listener {
     removeListener(event: VOSKSTREAM_WEBSOCKET_CLIENT_EVENTS, callback: Function): void;
     removeListeners(event: VOSKSTREAM_WEBSOCKET_CLIENT_EVENTS): void;
     off(event: VOSKSTREAM_WEBSOCKET_CLIENT_EVENTS, callback?: Function): void;
-    callEvent(event: VOSKSTREAM_WEBSOCKET_CLIENT_EVENTS, ...args: any): Promise<unknown>;
-    setLangModel(label: string | null): void;
+    callEvent(event: VOSKSTREAM_WEBSOCKET_CLIENT_EVENTS, ...args: any[]): Promise<unknown>;
+    open(): Promise<unknown>;
+    close(): Promise<unknown>;
+    getLangModels(): Promise<unknown>;
+    setLangModel(label: string | null): Promise<unknown>;
     transcribe(buffer: ArrayBufferLike | ArrayBufferView | Blob): void;
     startRecording(): Promise<boolean | undefined>;
     stopRecording(): Promise<unknown>;
-    open(): Promise<unknown>;
-    close(): Promise<unknown>;
 }
 export {};

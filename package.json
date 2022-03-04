@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "browserify": "browserify ./src/websocket/client.web.ts -p tsify -o ./dist-bundles/client.web.js",
-    "build": "del .\\dist /S /Q > NUL && tsc --build && cd src && copyfiles -e=\"./**/*.ts\" \"./**/*\" \"../dist/\" && cd ../ && npm run browserify",
+    "browserify": "browserify ./src/websocket/client.ts -p tsify -o ./dist-bundles/voskstream.client.web.js && uglifyjs ./dist-bundles/voskstream.client.web.js --compress --mangle -o ./dist-bundles/voskstream.client.web.min.js",
+    "build": "del .\\dist /S /Q > NUL && tsc --build && cd src && copyfiles \"./**/*\" \"../dist/\" && cd ../ && npm run browserify",
     "test": "node ./dist/test/test",
     "build-test": "npm run build & npm run test"
   },

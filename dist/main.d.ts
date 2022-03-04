@@ -1,5 +1,5 @@
 import VoskStreamWebSocketServer from "./websocket/server";
-import VoskStreamWebSocketClient from "./websocket/client.web";
+import VoskStreamWebSocketClient from "./websocket/client";
 declare const VoskStream: {
     TCP: {};
     WebSocket: {
