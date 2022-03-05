@@ -374,7 +374,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var _Record__type, _Record__stream, _Record__media_recorder, _Record__recorder, _Record__chunks, _Record__blob, _Record__blob_callbacks, _Record__stopped, _Record__request_data_interval, _RecordList_list, _Recorder_records;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Recorder = exports.Record_ = void 0;
-const listener_class_1 = require("../../src/utils/listener.class");
+const listener_class_1 = require("../utils/listener.class");
 class Record_ extends listener_class_1.Listener {
     constructor({ type, recorder = null }) {
         super();
@@ -580,4 +580,4 @@ else if (byteRemainder == 2) {
 } return base64; }
 window ? window["Recorder"] = Recorder : null;
 
-},{"../../src/utils/listener.class":1}]},{},[2]);
+},{"../utils/listener.class":1}]},{},[2]);

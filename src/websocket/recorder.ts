@@ -1,4 +1,4 @@
-import { Listener } from "../../src/utils/listener.class";
+import { Listener } from "../utils/listener.class";
 
 type RECORD_EVENTS = "start" | "data" | "stop";
 
