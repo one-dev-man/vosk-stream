@@ -2,6 +2,6 @@
 
 ---
 
-## See document at https://vosk-stream.doc.one-dev-mal.ml/
+## See document at https://vosk-stream.doc.one-dev-man.ml/
 
 ---
