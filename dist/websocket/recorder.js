@@ -217,5 +217,8 @@ else if (byteRemainder == 2) {
     c = (chunk & 15) << 2;
     base64 += encodings[a] + encodings[b] + encodings[c] + '=';
 } return base64; }
-window ? window["Recorder"] = Recorder : null;
+try {
+    window ? window["Recorder"] = Recorder : null;
+}
+catch (e) { }
 //# sourceMappingURL=recorder.js.map

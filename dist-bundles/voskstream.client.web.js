@@ -356,7 +356,10 @@ class VoskStreamWebSocketClient extends listener_class_1.Listener {
 }
 exports.default = VoskStreamWebSocketClient;
 _VoskStreamWebSocketClient_ws_rul = new WeakMap(), _VoskStreamWebSocketClient_ws_protocols = new WeakMap(), _VoskStreamWebSocketClient_ws = new WeakMap(), _VoskStreamWebSocketClient_record = new WeakMap(), _VoskStreamWebSocketClient_closed = new WeakMap(), _VoskStreamWebSocketClient_langModel = new WeakMap(), _VoskStreamWebSocketClient_send = new WeakMap();
-window ? window["VoskStream"] = { Client: VoskStreamWebSocketClient } : null;
+try {
+    window ? window["VoskStream"] = { Client: VoskStreamWebSocketClient } : null;
+}
+catch (e) { }
 
 },{"../utils/listener.class":1,"./recorder":3}],3:[function(require,module,exports){
 "use strict";
@@ -578,6 +581,9 @@ else if (byteRemainder == 2) {
     c = (chunk & 15) << 2;
     base64 += encodings[a] + encodings[b] + encodings[c] + '=';
 } return base64; }
-window ? window["Recorder"] = Recorder : null;
+try {
+    window ? window["Recorder"] = Recorder : null;
+}
+catch (e) { }
 
 },{"../utils/listener.class":1}]},{},[2]);
