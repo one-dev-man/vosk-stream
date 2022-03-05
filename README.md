@@ -2,7 +2,7 @@
 
 Vosk Stream is a NodeJS package using NodeJS Vosk API and FFMPEG to transcribe in real time audio data using a pre-trained model for Vosk API (see the [`vosk model list`](https://alphacephei.com/vosk/models)).
 
-## I - Installing :
+## I - Installing
 
 ```bash
 # npm
@@ -24,11 +24,11 @@ const VoskStream = require("vosk-stream").default;
 import VoskStream from "vosk-stream";
 ```
 
-## II - Usage :
+## II - Usage
 
 &nbsp;
 
-- ### WebSocket Server/Client :
+- ### WebSocket Server/Client
 
 The WebSocket implementation is powerful to use for web apps if you need to transcribe directly from a web page and you won't have a local transcription service on devices.
 
@@ -110,6 +110,6 @@ Then, use client for browser (from [`dist-bundles`](https://github.com/one-dev-m
 
 &nbsp;
 
-- ### TCP Server/Client :
+- ### TCP Server/Client
 
 (under development)
