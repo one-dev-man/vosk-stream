@@ -28,12 +28,6 @@ import VoskStream from "vosk-stream";
 
 &nbsp;
 
-- ### TCP Server/Client :
-
-(under development)
-
-&nbsp;
-
 - ### WebSocket Server/Client :
 
 The WebSocket implementation is powerful to use for web apps if you need to transcribe directly from a web page and you won't have a local transcription service on devices.
@@ -95,7 +89,7 @@ transcription_server.open();
 
 Then, use client for browser (from [`dist-bundles`](https://github.com/one-dev-man/vosk-stream/blob/main/dist-bundles/)):
 ```html
-<script src="voskstream.client.web.min.js"></script>
+<script type="application/javascript" src="https://raw.githubusercontent.com/one-dev-man/vosk-stream/main/dist-bundles/voskstream.client.web.min.js"></script>
 
 <script>
     (async () => {
@@ -113,3 +107,9 @@ Then, use client for browser (from [`dist-bundles`](https://github.com/one-dev-m
 </script>
 
 ```
+
+&nbsp;
+
+- ### TCP Server/Client :
+
+(under development)
