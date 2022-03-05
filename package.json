@@ -2,7 +2,7 @@
   "name": "vosk-stream",
   "version": "0.0.0-dev1",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/main.js",
   "scripts": {
     "browserify": "browserify ./src/websocket/client.ts -p tsify -o ./dist-bundles/voskstream.client.web.js && uglifyjs ./dist-bundles/voskstream.client.web.js --compress --mangle -o ./dist-bundles/voskstream.client.web.min.js",
     "build": "del .\\dist /S /Q > NUL && tsc --build && cd src && copyfiles \"./**/*\" \"../dist/\" && cd ../ && npm run browserify",
