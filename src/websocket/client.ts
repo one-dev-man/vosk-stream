@@ -158,4 +158,4 @@ export default class VoskStreamWebSocketClient extends Listener {
 
 }
 
-window ? window["VoskStream"] = { Client: VoskStreamWebSocketClient } : null;
+try { window ? window["VoskStream"] = { Client: VoskStreamWebSocketClient } : null; } catch(e) {}
