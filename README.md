@@ -89,7 +89,7 @@ transcription_server.open();
 
 Then, use client for browser (from [`dist-bundles`](https://github.com/one-dev-man/vosk-stream/blob/main/dist-bundles/)):
 ```html
-<script type="application/javascript" src="https://raw.githubusercontent.com/one-dev-man/vosk-stream/main/dist-bundles/voskstream.client.web.min.js"></script>
+<script type="application/javascript" src="https://cdn.jsdelivr.net/gh/one-dev-man/vosk-stream/dist-bundles/voskstream.client.web.min.js"></script>
 
 <script>
     (async () => {
