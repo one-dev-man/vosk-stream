@@ -6,5 +6,6 @@ declare const VoskStream: {
         Server: typeof VoskStreamWebSocketServer;
         Client: typeof VoskStreamWebSocketClient;
     };
+    setVoskLogLevel(level: number): void;
 };
 export default VoskStream;

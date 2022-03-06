@@ -16,7 +16,6 @@ const child_process_1 = require("child_process");
 const pathToFfmpeg = require("ffmpeg-static");
 const EventEmitter = require("events");
 const vosk = require("vosk");
-vosk.setLogLevel(0);
 const ffmpeg_streaming_args = [
     "-loglevel", "quiet",
     "-i", "-",
