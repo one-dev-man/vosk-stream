@@ -1,7 +1,7 @@
 import EventEmitter = require("events");
 import * as http from "http";
 
-import WebSocket = require("websocket");
+import WebSocket = require("ws");
 import Transcriber, { TranscriptionType } from "../stt/transcriber";
 
 type VOSKSTREAM_WEBSOCKET_SERVER_EVENTS = "open" | "close" | "error";
@@ -12,9 +12,9 @@ export default class VoskStreamWebSocketServer extends EventEmitter {
 
     #httpServer: http.Server;
 
-    #wss: WebSocket.server | null = null;
+    #wss: WebSocket.Server | null = null;
 
-    #request_filter = async (request: WebSocket.request) => { return true; }
+    #socket_filter = async (socket: any) => { return true; }
 
     #closed = true;
 
@@ -52,21 +52,21 @@ export default class VoskStreamWebSocketServer extends EventEmitter {
 
     open() {
         if(this.closed) {
-            this.#wss = new WebSocket.server({
-                httpServer: this.httpServer
+            this.#wss = new WebSocket.Server({
+                server: this.httpServer
             });
 
-            this.#wss.on("request", async (socket_request) => {
-                if(await this.#request_filter(socket_request)) {
+            this.#wss.on("connection", async (socket) => {
+                if(await this.#socket_filter(socket)) {
                     let transcriber: Transcriber | null = null;
-                    let socket = socket_request.accept();
+                    socket
 
                     let transcription_callback: Function | null = null;
                     
                     let old_transcription_memory: Array<TranscriptionType | null> = [null];
-                    socket.on("message", async (message) => {
-                        if(message.type == "utf8") {
-                            let request: { event: string | null, content: any } = JSON.parse(message.utf8Data);
+                    socket.on("message", async (data: WebSocket.RawData, isBinary: boolean) => {
+                        if(!isBinary) {
+                            let request: { event: string | null, content: any } = JSON.parse(data.toString("utf-8"));
                             let response: { event: string | null, content: any } = {} as any;
 
                             this.emit((request.event || "") as any, socket, request.content);
@@ -93,10 +93,10 @@ export default class VoskStreamWebSocketServer extends EventEmitter {
                                 response.content = { models: Object.keys(this.#loaded_modelpath) };
                             }
 
-                            socket.sendUTF(JSON.stringify(response));
+                            socket.send(JSON.stringify(response));
                         }
                         else {
-                            transcriber?.transcribe(message.binaryData);
+                            transcriber?.transcribe(Buffer.from(data));
                         }
                     });
                 }
@@ -108,7 +108,7 @@ export default class VoskStreamWebSocketServer extends EventEmitter {
     }
 
     close() {
-        this.#wss?.shutDown();
+        this.#wss?.close();
         this.#wss = null;
         this.#closed = true;
         this.emit("close");
@@ -116,8 +116,8 @@ export default class VoskStreamWebSocketServer extends EventEmitter {
 
     //
 
-    setRequestFilter(cb: (request: WebSocket.request) => Promise<boolean>) {
-        cb instanceof Function ? this.#request_filter = cb : null;
+    setClientFilter(cb: (socket: any) => Promise<boolean>) {
+        cb instanceof Function ? this.#socket_filter = cb : null;
     }
 
     //
@@ -134,7 +134,7 @@ export default class VoskStreamWebSocketServer extends EventEmitter {
 
 }
 
-function getTranscriptionCallback(socket: WebSocket.connection, response: { event: string | null, content: any }, old_transcription_memory: Array<TranscriptionType | null>) {
+function getTranscriptionCallback(socket: any, response: { event: string | null, content: any }, old_transcription_memory: Array<TranscriptionType | null>) {
     let cb = (transcription: TranscriptionType) => {
         if(
             ( transcription.partial != old_transcription_memory[0]?.partial
@@ -145,7 +145,7 @@ function getTranscriptionCallback(socket: WebSocket.connection, response: { even
             response.event = "transcription";
             response.content = transcription;
 
-            socket.sendUTF(JSON.stringify(response));
+            socket.send(JSON.stringify(response));
             old_transcription_memory[0] = transcription
         }
     }

@@ -13,10 +13,10 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _VoskStreamWebSocketServer_loaded_modelpath, _VoskStreamWebSocketServer_httpServer, _VoskStreamWebSocketServer_wss, _VoskStreamWebSocketServer_request_filter, _VoskStreamWebSocketServer_closed;
+var _VoskStreamWebSocketServer_loaded_modelpath, _VoskStreamWebSocketServer_httpServer, _VoskStreamWebSocketServer_wss, _VoskStreamWebSocketServer_socket_filter, _VoskStreamWebSocketServer_closed;
 Object.defineProperty(exports, "__esModule", { value: true });
 const EventEmitter = require("events");
-const WebSocket = require("websocket");
+const WebSocket = require("ws");
 const transcriber_1 = __importDefault(require("../stt/transcriber"));
 class VoskStreamWebSocketServer extends EventEmitter {
     constructor(options) {
@@ -24,7 +24,7 @@ class VoskStreamWebSocketServer extends EventEmitter {
         _VoskStreamWebSocketServer_loaded_modelpath.set(this, {});
         _VoskStreamWebSocketServer_httpServer.set(this, void 0);
         _VoskStreamWebSocketServer_wss.set(this, null);
-        _VoskStreamWebSocketServer_request_filter.set(this, async (request) => { return true; });
+        _VoskStreamWebSocketServer_socket_filter.set(this, async (socket) => { return true; });
         _VoskStreamWebSocketServer_closed.set(this, true);
         __classPrivateFieldSet(this, _VoskStreamWebSocketServer_httpServer, options.httpServer, "f");
     }
@@ -42,18 +42,18 @@ class VoskStreamWebSocketServer extends EventEmitter {
     //
     open() {
         if (this.closed) {
-            __classPrivateFieldSet(this, _VoskStreamWebSocketServer_wss, new WebSocket.server({
-                httpServer: this.httpServer
+            __classPrivateFieldSet(this, _VoskStreamWebSocketServer_wss, new WebSocket.Server({
+                server: this.httpServer
             }), "f");
-            __classPrivateFieldGet(this, _VoskStreamWebSocketServer_wss, "f").on("request", async (socket_request) => {
-                if (await __classPrivateFieldGet(this, _VoskStreamWebSocketServer_request_filter, "f").call(this, socket_request)) {
+            __classPrivateFieldGet(this, _VoskStreamWebSocketServer_wss, "f").on("connection", async (socket) => {
+                if (await __classPrivateFieldGet(this, _VoskStreamWebSocketServer_socket_filter, "f").call(this, socket)) {
                     let transcriber = null;
-                    let socket = socket_request.accept();
+                    socket;
                     let transcription_callback = null;
                     let old_transcription_memory = [null];
-                    socket.on("message", async (message) => {
-                        if (message.type == "utf8") {
-                            let request = JSON.parse(message.utf8Data);
+                    socket.on("message", async (data, isBinary) => {
+                        if (!isBinary) {
+                            let request = JSON.parse(data.toString("utf-8"));
                             let response = {};
                             this.emit((request.event || ""), socket, request.content);
                             if (request.content.command == "set_model") {
@@ -73,10 +73,10 @@ class VoskStreamWebSocketServer extends EventEmitter {
                                 response.event = request.event;
                                 response.content = { models: Object.keys(__classPrivateFieldGet(this, _VoskStreamWebSocketServer_loaded_modelpath, "f")) };
                             }
-                            socket.sendUTF(JSON.stringify(response));
+                            socket.send(JSON.stringify(response));
                         }
                         else {
-                            transcriber?.transcribe(message.binaryData);
+                            transcriber?.transcribe(Buffer.from(data));
                         }
                     });
                 }
@@ -86,26 +86,27 @@ class VoskStreamWebSocketServer extends EventEmitter {
         }
     }
     close() {
-        __classPrivateFieldGet(this, _VoskStreamWebSocketServer_wss, "f")?.shutDown();
+        __classPrivateFieldGet(this, _VoskStreamWebSocketServer_wss, "f")?.close();
         __classPrivateFieldSet(this, _VoskStreamWebSocketServer_wss, null, "f");
         __classPrivateFieldSet(this, _VoskStreamWebSocketServer_closed, true, "f");
         this.emit("close");
     }
     //
-    setRequestFilter(cb) {
-        cb instanceof Function ? __classPrivateFieldSet(this, _VoskStreamWebSocketServer_request_filter, cb, "f") : null;
+    setClientFilter(cb) {
+        cb instanceof Function ? __classPrivateFieldSet(this, _VoskStreamWebSocketServer_socket_filter, cb, "f") : null;
     }
     //
     async loadModel(label, modelpath) {
         __classPrivateFieldGet(this, _VoskStreamWebSocketServer_loaded_modelpath, "f")[label] = modelpath;
         await transcriber_1.default.VOSK_MODELS.get(__classPrivateFieldGet(this, _VoskStreamWebSocketServer_loaded_modelpath, "f")[label]);
     }
-    unloadModel(label) {
+    async unloadModel(label) {
+        (await transcriber_1.default.VOSK_MODELS.get(__classPrivateFieldGet(this, _VoskStreamWebSocketServer_loaded_modelpath, "f")[label])).free();
         delete __classPrivateFieldGet(this, _VoskStreamWebSocketServer_loaded_modelpath, "f")[label];
     }
 }
 exports.default = VoskStreamWebSocketServer;
-_VoskStreamWebSocketServer_loaded_modelpath = new WeakMap(), _VoskStreamWebSocketServer_httpServer = new WeakMap(), _VoskStreamWebSocketServer_wss = new WeakMap(), _VoskStreamWebSocketServer_request_filter = new WeakMap(), _VoskStreamWebSocketServer_closed = new WeakMap();
+_VoskStreamWebSocketServer_loaded_modelpath = new WeakMap(), _VoskStreamWebSocketServer_httpServer = new WeakMap(), _VoskStreamWebSocketServer_wss = new WeakMap(), _VoskStreamWebSocketServer_socket_filter = new WeakMap(), _VoskStreamWebSocketServer_closed = new WeakMap();
 function getTranscriptionCallback(socket, response, old_transcription_memory) {
     let cb = (transcription) => {
         if ((transcription.partial != old_transcription_memory[0]?.partial
@@ -114,7 +115,7 @@ function getTranscriptionCallback(socket, response, old_transcription_memory) {
                 (!transcription.partial || transcription.content.length > 0)) {
             response.event = "transcription";
             response.content = transcription;
-            socket.sendUTF(JSON.stringify(response));
+            socket.send(JSON.stringify(response));
             old_transcription_memory[0] = transcription;
         }
     };

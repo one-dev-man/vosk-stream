@@ -279,7 +279,7 @@ class VoskStreamWebSocketClient extends listener_class_1.Listener {
     open() {
         return new Promise((resolve, reject) => {
             this.once("open", () => resolve(true));
-            __classPrivateFieldSet(this, _VoskStreamWebSocketClient_ws, new WebSocket(this.url || "", this.protocols || undefined), "f");
+            __classPrivateFieldSet(this, _VoskStreamWebSocketClient_ws, new WebSocket(this.url ? this.url instanceof URL ? this.url.href : this.url : "", this.protocols || undefined), "f");
             __classPrivateFieldGet(this, _VoskStreamWebSocketClient_ws, "f").addEventListener("open", () => {
                 __classPrivateFieldGet(this, _VoskStreamWebSocketClient_ws, "f")?.addEventListener("message", message => {
                     let response = JSON.parse(message.data);

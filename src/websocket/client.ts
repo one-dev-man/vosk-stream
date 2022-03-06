@@ -56,7 +56,7 @@ export default class VoskStreamWebSocketClient extends Listener {
         return new Promise((resolve, reject) => {
             this.once("open", () => resolve(true));
 
-            this.#ws = new WebSocket(this.url || "", this.protocols || undefined);
+            this.#ws = new WebSocket(this.url ? this.url instanceof URL ? this.url.href : this.url : "", this.protocols || undefined);
 
             this.#ws.addEventListener("open", () => {
                 this.#ws?.addEventListener("message", message => {

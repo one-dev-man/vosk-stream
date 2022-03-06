@@ -87,9 +87,8 @@ Transcriber.VOSK_MODELS = {
             setImmediate(() => {
                 let model = Transcriber.VOSK_MODELS[modelpath];
                 if (!model) {
-                    let model = new vosk.Model(modelpath);
+                    model = new vosk.Model(modelpath);
                     Transcriber.VOSK_MODELS[modelpath] = model;
-                    model = Transcriber.VOSK_MODELS[modelpath];
                 }
                 resolve(model);
             });

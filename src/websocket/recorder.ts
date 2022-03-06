@@ -83,7 +83,7 @@ export class Record_ extends Listener {
         this.#media_recorder = new MediaRecorder(this.#stream);
 
         if(this.media_recorder) {
-            this.media_recorder.addEventListener("dataavailable", async (e) => {
+            this.media_recorder.addEventListener("dataavailable", async (e: any) => {
                 if(!e.data) return;
                 if(e.data.size == 0) return;
                 this.#chunks?.push(e.data);
@@ -104,7 +104,7 @@ export class Record_ extends Listener {
         return new Promise((resolve, reject) => {
             if(this.media_recorder && this.stream) {
                 if(this.media_recorder.state != "inactive") {
-                    this.media_recorder.addEventListener("stop", (e) => {
+                    this.media_recorder.addEventListener("stop", (e: any) => {
                         this.#blob = new Blob(this.#chunks as any, { type: this.type });
                         this.#blob_callbacks.forEach(cb => { cb(); });
                         let bcbl = this.#blob_callbacks.length;
