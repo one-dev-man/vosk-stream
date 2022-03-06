@@ -3,7 +3,7 @@
 ---
 
 ## See document at :
-- ## https://vosk-stream.doc.one-dev-man.ml/
+- ## https://vosk-stream.doc.onedevman.ml/
 ## &emsp;Or
 - ## https://one-dev-man.github.io/vosk-stream/
 

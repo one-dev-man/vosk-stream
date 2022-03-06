@@ -127,7 +127,8 @@ export default class VoskStreamWebSocketServer extends EventEmitter {
         await Transcriber.VOSK_MODELS.get(this.#loaded_modelpath[label]);
     }
 
-    unloadModel(label: string) {
+    async unloadModel(label: string) {
+        (await Transcriber.VOSK_MODELS.get(this.#loaded_modelpath[label])).free();
         delete this.#loaded_modelpath[label];
     }
 

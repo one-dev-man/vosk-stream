@@ -25,9 +25,8 @@ export default class Transcriber extends EventEmitter {
                 setImmediate(() => {
                     let model = (Transcriber.VOSK_MODELS as any)[modelpath];
                     if(!model) {
-                        let model = new vosk.Model(modelpath);
+                        model = new vosk.Model(modelpath);
                         (Transcriber.VOSK_MODELS as any)[modelpath] = model
-                        model = (Transcriber.VOSK_MODELS as any)[modelpath];
                     }
                     
                     resolve(model);
