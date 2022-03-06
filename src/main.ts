@@ -1,6 +1,7 @@
 import VoskStreamWebSocketServer from "./websocket/server";
 import VoskStreamWebSocketClient from "./websocket/client";
 
+const vosk = require("vosk");
 
 const VoskStream = {
     TCP: {
@@ -9,6 +10,10 @@ const VoskStream = {
     WebSocket: {
         Server: VoskStreamWebSocketServer,
         Client: VoskStreamWebSocketClient
+    },
+
+    setVoskLogLevel(level: number) {
+        vosk.setLogLevel(level);
     }
 }
 

@@ -5,7 +5,6 @@ import pathToFfmpeg = require("ffmpeg-static");
 import EventEmitter = require("events");
 
 const vosk = require("vosk");
-vosk.setLogLevel(0);
 
 const ffmpeg_streaming_args = [
     "-loglevel", "quiet",
